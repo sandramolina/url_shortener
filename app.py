@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import json
+import os.path
 
 app = Flask(__name__)
 
@@ -11,6 +12,14 @@ def home():
 def your_url():
     if request.method == "POST":
         user_urls = {}
+
+        if os.path.exists("user_urls.json"):
+            with open("user_urls.json") as urls_file:
+                    user_urls = json.load(urls_file)
+
+        if request.form["code"] in user_urls.keys():
+            return redirect(url_for("home"))
+
         user_urls[request.form['code']] = {"url":request.form['url']}
         with open("user_urls.json", "w") as url_file: #"w" - Write - Opens a file for writing, creates the file if it does not exist
         #The "as" keyword is used to create an alias.

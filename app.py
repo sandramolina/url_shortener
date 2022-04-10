@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import json
 import os.path
 
 app = Flask(__name__)
+app.secret_key = "423423dfbfelfdmbl566750376bgb"
 
 @app.route('/')
 def home():
@@ -18,6 +19,7 @@ def your_url():
                     user_urls = json.load(urls_file)
 
         if request.form["code"] in user_urls.keys():
+            flash("Short name taken, please create another one")
             return redirect(url_for("home"))
 
         user_urls[request.form['code']] = {"url":request.form['url']}

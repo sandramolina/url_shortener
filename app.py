@@ -1,3 +1,4 @@
+from fileinput import filename
 import re
 from flask import Flask, render_template, request, redirect, url_for, flash
 import json
@@ -30,7 +31,7 @@ def your_url():
         else:
             f = request.files["file"]
             full_name = request.form["code"] + secure_filename(f.filename)
-            f.save("/Users/sandra/Documents/Dev 1/python/url_shortener/" + full_name)
+            f.save("/Users/sandra/Documents/Dev 1/python/url_shortener/static/user_files/" + full_name)
             user_urls[request.form['code']] = {"file":full_name}
         
         with open("user_urls.json", "w") as url_file: #"w" - Write - Opens a file for writing, creates the file if it does not exist
@@ -49,5 +50,7 @@ def redirect_to_url(code):
             if code in user_urls.keys():
                 if "url" in user_urls[code].keys():
                     return redirect(user_urls[code]["url"])
+                else:
+                    return redirect(url_for("static", filename="user_files/" + user_urls[code]["file"]))
 
 

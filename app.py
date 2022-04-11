@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+import re
+from flask import Flask, render_template, request, redirect, url_for, flash
 import json
+import os.path
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.secret_key = "423423dfbfelfdmbl566750376bgb"
 
 @app.route('/')
 def home():
@@ -11,7 +15,24 @@ def home():
 def your_url():
     if request.method == "POST":
         user_urls = {}
-        user_urls[request.form['code']] = {"url":request.form['url']}
+
+        if os.path.exists("user_urls.json"):
+            with open("user_urls.json") as urls_file:
+                    user_urls = json.load(urls_file)
+
+        if request.form["code"] in user_urls.keys():
+            flash("Short name taken, please create another one")
+            return redirect(url_for("home"))
+
+        if "url" in request.form.keys():
+            user_urls[request.form['code']] = {"url":request.form['url']}
+
+        else:
+            f = request.files["file"]
+            full_name = request.form["code"] + secure_filename(f.filename)
+            f.save("/Users/sandra/Documents/Dev 1/python/url_shortener/" + full_name)
+            user_urls[request.form['code']] = {"file":full_name}
+        
         with open("user_urls.json", "w") as url_file: #"w" - Write - Opens a file for writing, creates the file if it does not exist
         #The "as" keyword is used to create an alias.
             json.dump(user_urls, url_file)

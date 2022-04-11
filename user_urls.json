@@ -1,1 +1,3 @@
-{"hi": {"url": "http://helllo.com"}, "hello": {"url": "http://helllo.com"}, "hiya": {"url": "http://helllo.com"}, "other": {"url": "http://go.com"}, "sd": {"file": "sdwk2_object_diagram.png"}, "dag2": {"file": "dag2wk2_class_diagrams.png"}}
+{"github": {"url": "https://github.com/sandramolina"},
+"go": {"url": "http://google.com"},
+"diag": {"file": "dag2wk2_class_diagrams.png"}}

@@ -40,3 +40,14 @@ def your_url():
 
     else:
         return redirect(url_for("home")) #this will take the user to the home page it the your url is tried to be accessed from the url bar
+
+@app.route("/<string:code>")
+def redirect_to_url(code):
+    if os.path.exists("user_urls.json"):
+        with open("user_urls.json") as urls_file:
+            user_urls = json.load(urls_file)
+            if code in user_urls.keys():
+                if "url" in user_urls[code].keys():
+                    return redirect(user_urls[code]["url"])
+
+

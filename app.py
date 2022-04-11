@@ -1,5 +1,6 @@
+from fileinput import filename
 import re
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, abort, session, jsonify
 import json
 import os.path
 from werkzeug.utils import secure_filename
@@ -9,7 +10,7 @@ app.secret_key = "423423dfbfelfdmbl566750376bgb"
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html', codes=session.keys())
 
 @app.route('/your-url', methods=["GET", "POST"])
 def your_url():
@@ -30,13 +31,36 @@ def your_url():
         else:
             f = request.files["file"]
             full_name = request.form["code"] + secure_filename(f.filename)
-            f.save("/Users/sandra/Documents/Dev 1/python/url_shortener/" + full_name)
+            f.save("/Users/sandra/Documents/Dev 1/python/url_shortener/static/user_files/" + full_name)
             user_urls[request.form['code']] = {"file":full_name}
         
         with open("user_urls.json", "w") as url_file: #"w" - Write - Opens a file for writing, creates the file if it does not exist
         #The "as" keyword is used to create an alias.
             json.dump(user_urls, url_file)
+            session[request.form['code']] = True
         return render_template('your_url.html', code=request.form['code']) #code is the short name we want to give to the shorten url (input tag in home.html)
 
     else:
         return redirect(url_for("home")) #this will take the user to the home page it the your url is tried to be accessed from the url bar
+
+@app.route("/<string:code>")
+def redirect_to_url(code):
+    if os.path.exists("user_urls.json"):
+        with open("user_urls.json") as urls_file:
+            user_urls = json.load(urls_file)
+            if code in user_urls.keys():
+                if "url" in user_urls[code].keys():
+                    return redirect(user_urls[code]["url"])
+                else:
+                    return redirect(url_for("static", filename="user_files/" + user_urls[code]["file"]))
+    return abort(404)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("page_not_found.html"), 404
+
+@app.route('/api')
+def session_api():
+    return jsonify(list(session.keys()))
+
+

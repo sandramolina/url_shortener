@@ -1,18 +1,17 @@
+{% extends 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
+    {% block title %} The URL Shortener{% endblock %} <!-- this is for the base template -->
+
 </head>
 <body>
+    {% block main %}
     <h1>URL Shortener</h1>
-
-    {% for message in get_flashed_messages() %}
-    <h2>{{ message }}</h2>
-    {% endfor %}
-
+    
     <form action="your-url" method="post"> <!-- action specifies where the form will submit the data -->
 
         <label for="url">Website URL</label>
@@ -34,5 +33,16 @@
         <input type="submit" value="Shorten">
     </form>
 
+    {% if codes %}
+    <h2>Codes created:</h2>
+    <ol>
+        {% for code in codes %}
+        <a href="{{ url_for('redirect_to_url', code=code)}}">
+        <li>{{ code }}</li>
+        </a>
+        {% endfor %}
+    </ol>
+    {% endif %}
+    {% endblock %} <!-- this is the closig tag for the base template -->
 </body>
 </html>

@@ -38,7 +38,9 @@
     <h2>Codes created:</h2>
     <ol>
         {% for code in codes %}
+        <a href="{{ url_for('redirect_to_url', code=code)}}">
         <li>{{ code }}</li>
+        </a>
         {% endfor %}
     </ol>
     {% endif %}
